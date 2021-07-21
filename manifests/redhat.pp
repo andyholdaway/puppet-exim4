@@ -9,17 +9,19 @@
 # Specialization class for Redhat systems
 class exim4::redhat inherits exim4::common {
 
-    package { $exim4::params::utils_packages:
-        ensure  => $exim4::ensure,
-        require => Package['exim4'],
-    }
+ensure_packages('[$exim4::params::utils_packages]', 
+    { ensure  => $exim4::ensure, 
+      require => Package['exim4'] 
+    } )
 
     File[$exim4::params::configfile] {
         content => template('exim4/exim.conf.erb')
     }
 
     if ($exim4::ensure == 'present') {
-      package { [ 'postfix', 'ssmtp' ] :  ensure => 'absent' }
+      ensure_packages([ 'postfix', 'ssmtp' ], 
+        { ensure  => 'absent'
+      } )
     }
 
 }
